@@ -56,14 +56,23 @@
             android:textColor="@color/white"
             android:textSize="16sp" />
 
-    <!--     <TextView
-            android:id="@+id/runningtip1"
+        <TextView
+            android:id="@+id/btnExport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity=""
-            android:text=""
-            android:textColor="@color/green"
-            android:textSize="12sp" /> -->
+            android:text="导出结果"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+        
+        <TextView
+            android:id="@+id/btnOpenDir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="打开文件"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <View

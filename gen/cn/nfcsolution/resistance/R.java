@@ -46,9 +46,11 @@ public final class R {
         public static final int icon_stop=0x7f020007;
     }
     public static final class id {
-        public static final int action_settings=0x7f090003;
+        public static final int action_settings=0x7f090005;
+        public static final int btnExport=0x7f090002;
+        public static final int btnOpenDir=0x7f090003;
         public static final int btnStart=0x7f090001;
-        public static final int chart=0x7f090002;
+        public static final int chart=0x7f090004;
         public static final int edtimer=0x7f090000;
     }
     public static final class layout {

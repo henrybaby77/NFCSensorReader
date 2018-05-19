@@ -1,5 +1,6 @@
 package cn.nfcsolution.resistance;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +18,7 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.aofei.nfc.TagUtil;
 
@@ -57,6 +60,9 @@ public class MainActivity extends Activity {
 	private List<PointValue> mValues = new ArrayList<PointValue>();
 	private List<Line> mLines;
 	private int mLoopCounter = 0;
+	private TextView mBtnExport;
+	private TextView mBtnOpenDir;
+	private File mParentDirectory = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -156,8 +162,61 @@ public class MainActivity extends Activity {
 
 		mEdtTime = (EditText) findViewById(R.id.edtimer);
 //		mTipView = (TextView) findViewById(R.id.runningtip1);
+		
+		mBtnExport = (TextView) findViewById(R.id.btnExport);
+		mBtnExport.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG );
+		mBtnExport.setOnClickListener(new JEscapeDoubleClickListener() {
+			@Override
+			public void onNoDoubleClick(View v) {
+				export2Local();
+			}
+		});
+		
+		mBtnOpenDir = (TextView) findViewById(R.id.btnOpenDir);
+		mBtnOpenDir.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+		mBtnOpenDir.setOnClickListener(new JEscapeDoubleClickListener() {
+			@Override
+			public void onNoDoubleClick(View v) {
+				if (mParentDirectory != null) {
+					Tools.openDirectory(MainActivity.this, mParentDirectory);
+				} else {
+					Tools.showToast(MainActivity.this, "请先导出结果！");
+				}
+			}
+		});
 	}
 
+	private void export2Local() {
+		Tools.shortToast(this, "正在导出..");
+		new AsyncTask<Void, Void, String>() {
+			@Override
+			protected String doInBackground(Void... arg0) {
+				if (randomNumbersTab.size() == 0) {
+					return "没有可导出的数据！";
+				}
+				int i = 0;
+				StringBuffer filecontent = new StringBuffer();
+				filecontent.append("本次电阻值测量结果如下：\n");
+				filecontent.append("-------------\n");
+				for (Float r : randomNumbersTab) {
+					filecontent.append(String.format("%d: %.3f 千欧\n", (i+1), r));
+					i++;
+				}
+				return Tools.savaFileToSD(MainActivity.this, filecontent.toString());
+			}
+			
+			@Override
+			protected void onPostExecute(String result) {
+				if (result != null && result.endsWith(".txt")) {
+					Tools.showToast(MainActivity.this, "导出成功！文件位置：" + result);
+					mParentDirectory = new File(result);
+				} else {
+					Tools.showToast(MainActivity.this, result);
+				}
+			};
+		}.execute();
+	}
+	
 	private void initData() {
 		
 	}

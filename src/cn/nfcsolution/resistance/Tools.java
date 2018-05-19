@@ -1,7 +1,15 @@
 package cn.nfcsolution.resistance;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -91,5 +99,36 @@ public final class Tools {
 	
 	public static void shortToast(Context context, String message) {
 		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+	}
+	
+	public static String savaFileToSD(Context context, String filecontent) {
+		try {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmssS", Locale.getDefault());
+			String filename = simpleDateFormat.format(new Date()) + ".txt";
+		    if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+		    	String dirName = Environment.getExternalStorageDirectory().getCanonicalPath() + File.separator + "PSS";
+		    	filename = dirName + File.separator + filename;
+		        File file = new File(dirName);
+		        if (!file.exists()) {
+					file.mkdirs();
+				}
+		        
+		    	FileOutputStream output = new FileOutputStream(filename);
+		        output.write(filecontent.getBytes());
+		        output.close();
+		        return filename;
+		    } else {
+		    	return "SD卡不存在或者不可读写";
+		    }
+		} catch (Exception e) {
+			return "导出失败："+ e.getMessage();
+		}
+	}
+	
+	public static void openDirectory(Context context, File parentFlie) {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.fromFile(parentFlie), "text/plain");
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(intent);
 	}
 }
